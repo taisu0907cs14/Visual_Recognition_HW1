@@ -1,0 +1,20 @@
+# 忽略資料集與影像集
+data/
+*.jpg
+*.jpeg
+*.png
+
+# 忽略模型權重與訓練輸出
+outputs/
+*.pth
+*.pt
+
+# 忽略推論產出的結果 (可選)
+*.csv
+*.zip
+
+# 忽略 Python 暫存檔與虛擬環境
+__pycache__/
+*.pyc
+.env
+venv/
