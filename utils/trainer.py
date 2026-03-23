@@ -9,6 +9,27 @@ def train_model(model, dataloaders, dataset_sizes, criterion, optimizer, schedul
     writer = SummaryWriter(log_dir=os.path.join(output_dir, 'logs'))
     log_path = os.path.join(output_dir, 'log.txt')
     
+    # --- 新增：計算並記錄模型參數量 ---
+    # p.numel() 會回傳該層 tensor 的元素總數
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    
+    param_info = (
+        f"{'='*30}\n"
+        f"模型參數量統計:\n"
+        f"- 總參數量 (Total): {total_params:,}\n"
+        f"- 可訓練參數 (Trainable): {trainable_params:,}\n"
+        f"{'='*30}"
+    )
+    
+    # 印在終端機
+    print(param_info)
+    
+    # 寫入 log.txt
+    with open(log_path, 'a') as f:
+        f.write(param_info + '\n\n')
+    # ----------------------------------
+    
     best_acc = 0.0
     global_step = 0
 

@@ -6,11 +6,11 @@ from datetime import datetime
 
 # 匯入自定義模組
 from dataset import get_dataloaders
-from models import get_resnet50_baseline, get_resnet50_cbam
+from models import get_resnet50_baseline, get_resnet50_cbam, get_resnet50_se
 from utils import train_model
 
 # --- 設定超參數 ---
-EXP_NAME = 'cbam_res50_TrivialAugmentation'
+EXP_NAME = 'se_res50'
 DATA_DIR = './data'
 BATCH_SIZE = 128
 NUM_EPOCHS = 100
@@ -29,7 +29,8 @@ def main():
     
     # 2. 模型
     # model = get_resnet50_baseline(num_classes=len(class_names))
-    model = get_resnet50_cbam(num_classes=len(class_names))
+    # model = get_resnet50_cbam(num_classes=len(class_names))
+    model = get_resnet50_se(num_classes=len(class_names))
     model = model.to(device)
 
     # 3. 優化器與排程
