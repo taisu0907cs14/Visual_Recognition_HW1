@@ -10,7 +10,7 @@ from models import get_resnet50_baseline, get_resnet50_cbam, get_resnet50_se
 from utils import train_model
 
 # --- 設定超參數 ---
-EXP_NAME = 'se_res50'
+EXP_NAME = 'baseline_res50'
 DATA_DIR = './data'
 BATCH_SIZE = 128
 NUM_EPOCHS = 100
@@ -28,9 +28,9 @@ def main():
     dataloaders, dataset_sizes, class_names = get_dataloaders(DATA_DIR, BATCH_SIZE)
     
     # 2. 模型
-    # model = get_resnet50_baseline(num_classes=len(class_names))
+    model = get_resnet50_baseline(num_classes=len(class_names))
     # model = get_resnet50_cbam(num_classes=len(class_names))
-    model = get_resnet50_se(num_classes=len(class_names))
+    # model = get_resnet50_se(num_classes=len(class_names))
     model = model.to(device)
 
     # 3. 優化器與排程

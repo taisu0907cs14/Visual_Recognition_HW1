@@ -6,14 +6,14 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from dataset import TestDataset, get_dataloaders
-from models import get_resnet50_baseline, get_resnet50_cbam
+from models import get_resnet50_baseline, get_resnet50_cbam, get_resnet50_se
 
 # --- 參數設定 ---
 # 請填入你訓練產出的資料夾路徑
-CHECKPOINT_PATH = './outputs/20260320_224346_cbam_res50/best_model.pth'
+CHECKPOINT_PATH = './outputs/20260323_170449_se_res50/best_model.pth'
 DATA_DIR = './data'
 TEST_DIR = './data/test'
-SAVE_PATH = './outputs/20260320_224346_cbam_res50/prediction.csv'
+SAVE_PATH = './outputs/20260323_170449_se_res50/prediction.csv'
 BATCH_SIZE = 128
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -25,7 +25,8 @@ def main():
 
     # 2. 準備模型並載入權重
     # model = get_resnet50_baseline(num_classes=num_classes)
-    model = get_resnet50_cbam(num_classes=num_classes)
+    # model = get_resnet50_cbam(num_classes=num_classes)
+    model = get_resnet50_se(num_classes=len(class_names))
     model.load_state_dict(torch.load(CHECKPOINT_PATH, weights_only=True))
     model = model.to(device)
     model.eval()
