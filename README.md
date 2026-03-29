@@ -2,7 +2,8 @@
 - Student ID: 314553033
 - Name: 蘇承泰
 ## Introduction
-Breifly introduce your work here
+Breifly introduce your work here \
+Resnet50 + CBAM + Trivial_Augmentation + freeze-thaw + label-smoothing + WeightedRandomSampler
 ## Enviroment Setup
 How to install dependencies
 ``` bash
@@ -13,12 +14,14 @@ pip install matplotlib tqdm scikit-learn tensorboard pandas
 ```
 ## Usage
 ### Training
-Hoe to train your model
+How to train your model
 ``` bash
 python train.py
 ```
 ### Inference
-How to run inference
+How to run inference \
+In `infernce.py` \
+
 ``` bash
 pyhton inference.py
 ```

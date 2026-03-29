@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision import models
-from torchvision.models import ResNet50_Weights
+from torchvision.models import ResNet50_Weights, ResNeXt50_32X4D_Weights
 from torchvision.models.resnet import ResNet
 
 # --- 1. 通道注意力模組 (Channel Attention) ---
@@ -113,6 +113,30 @@ def get_resnet50_cbam(num_classes):
     print(f"[Model Init] 成功載入官方權重。放過未初始化的 CBAM 參數數量: {len(missing_keys)}")
     
     # 設定最終的 FC 層
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    
+    return model
+
+def get_resnext50_cbam(num_classes):
+    """
+    建立帶有 CBAM 注意力機制的 ResNeXt50_32x4d 模型
+    """
+    # ResNeXt 的精髓：將原本的一大坨卷積，拆分成 32 個獨立的群組 (groups=32)
+    # 每個群組的通道寬度為 4 (width_per_group=4)
+    model = ResNet(CBAMBottleneck, [3, 4, 6, 3], groups=32, width_per_group=4)
+    
+    # 載入 PyTorch 官方的 ResNeXt50 預訓練權重
+    baseline_weights = models.resnext50_32x4d(weights=ResNeXt50_32X4D_Weights.IMAGENET1K_V1).state_dict()
+    
+    # 剔除最後的分類層 FC
+    pretrained_dict = {k: v for k, v in baseline_weights.items() if not k.startswith('fc')}
+    
+    # 使用 strict=False 載入 (放過我們新增的 CBAM 層)
+    missing_keys, unexpected_keys = model.load_state_dict(pretrained_dict, strict=False)
+    
+    print(f"[Model Init] 成功載入 ResNeXt50 官方權重。放過未初始化的 CBAM 參數數量: {len(missing_keys)}")
+    
+    # 設定你自己的 100 類 FC 層
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     
     return model

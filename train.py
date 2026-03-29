@@ -6,11 +6,11 @@ from datetime import datetime
 
 # 匯入自定義模組
 from dataset import get_dataloaders
-from models import get_resnet50_baseline, get_resnet50_cbam, get_resnet50_se
+from models import get_resnet50_baseline, get_resnet50_cbam, get_resnet50_se, get_resnext50_cbam
 from utils import train_model
 
 # --- 設定超參數 ---
-EXP_NAME = 'cbam_freeze_thaw_weak_aug'  # 這個名字會用來命名輸出資料夾，建議包含模型架構與訓練策略的關鍵字，方便日後回顧
+EXP_NAME = 'cbam_freeze_thaw_label_smoothing_weighted'  # 這個名字會用來命名輸出資料夾，建議包含模型架構與訓練策略的關鍵字，方便日後回顧
 DATA_DIR = './data'
 BATCH_SIZE = 128
 
@@ -33,11 +33,12 @@ def main():
     # 2. 模型 (這裡以 CBAM 為例，你也可以換成 SE)
     # model = get_resnet50_baseline(num_classes=len(class_names))
     # model = get_resnet50_se(num_classes=len(class_names))
+    # model = get_resnext50_cbam(num_classes=len(class_names))
     model = get_resnet50_cbam(num_classes=len(class_names))
     model = model.to(device)
 
     # 3. 恢復為最乾淨的 CrossEntropyLoss (移除 Label Smoothing)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.05)
 
     # ==========================================
     # 階段一：凍結主幹 (Freeze Backbone)
