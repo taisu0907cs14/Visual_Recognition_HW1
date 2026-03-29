@@ -3,7 +3,8 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 def train_model(model, dataloaders, dataset_sizes, criterion, optimizer, scheduler, 
-                device, num_epochs=50, output_dir='./outputs'):
+                device, num_epochs=50, output_dir='./outputs',
+                start_epoch=0, best_acc=0.0, global_step=0):
     
     os.makedirs(output_dir, exist_ok=True)
     writer = SummaryWriter(log_dir=os.path.join(output_dir, 'logs'))
@@ -29,13 +30,11 @@ def train_model(model, dataloaders, dataset_sizes, criterion, optimizer, schedul
     with open(log_path, 'a') as f:
         f.write(param_info + '\n\n')
     # ----------------------------------
-    
-    best_acc = 0.0
-    global_step = 0
 
-    for epoch in range(num_epochs):
+    for epoch in range(start_epoch, start_epoch + num_epochs):
         current_lr = optimizer.param_groups[0]['lr']
-        header = f'Epoch {epoch+1}/{num_epochs} | LR: {current_lr:.8f}'
+        # 顯示絕對 Epoch 數字，不要印出 1/90 這種容易混淆的格式
+        header = f'Epoch {epoch+1} | LR: {current_lr:.8f}'
         print(f'\n{header}\n' + '-'*10)
         with open(log_path, 'a') as f:
             f.write(f'\n{header}\n' + '-'*10 + '\n')
@@ -63,7 +62,8 @@ def train_model(model, dataloaders, dataset_sizes, criterion, optimizer, schedul
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
-                        global_step += 1
+                        
+                        global_step += 1 # 🌟 這裡會無縫接續上一階段的步數
                         if batch_idx % 20 == 0:
                             writer.add_scalar('Loss/train_iter', loss.item(), global_step)
 
@@ -78,22 +78,22 @@ def train_model(model, dataloaders, dataset_sizes, criterion, optimizer, schedul
             with open(log_path, 'a') as f:
                 f.write(res + '\n')
 
+            # 🌟 x 軸使用絕對的 epoch 數值
             writer.add_scalar(f'Loss/{phase}_epoch', epoch_loss, epoch)
             writer.add_scalar(f'Accuracy/{phase}_epoch', epoch_acc, epoch)
 
             if phase == 'val' and epoch_acc > best_acc:
-                best_acc = epoch_acc
+                best_acc = epoch_acc # 🌟 完美繼承，不會被重置
                 torch.save(model.state_dict(), os.path.join(output_dir, 'best_model.pth'))
-                # print(f'>>> Best Model Saved (Acc: {best_acc:.4f})')
                 res = f'>>> Best Model Saved (Acc: {best_acc:.4f})'
                 print(res)
                 with open(log_path, 'a') as f:
                     f.write(res + '\n')
 
-        # 每個 Epoch 結束後動態儲存 Last Model
         torch.save(model.state_dict(), os.path.join(output_dir, 'last_model.pth'))
         scheduler.step()
 
     writer.close()
-    print(f'\n訓練完成！結果儲存在: {output_dir}')
-    return model
+    
+    # 🌟 訓練結束後，回傳當前的狀態給外部
+    return model, best_acc, global_step

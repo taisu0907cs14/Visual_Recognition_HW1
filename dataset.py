@@ -32,14 +32,14 @@ def get_dataloaders(data_dir, batch_size=32, num_workers=8):
     custom_augment_space = transforms.RandomChoice([
         transforms.Lambda(lambda x: x),  # 1. 什麼都不做 (保持原圖)
         transforms.ColorJitter(brightness=(0.1, 1.9)),  # 2. 亮度
-        transforms.ColorJitter(contrast=(0.1, 1.9)),    # 3. 對比度
-        transforms.ColorJitter(saturation=(0.1, 1.9)),  # 4. 飽和度
-        transforms.RandomAdjustSharpness(sharpness_factor=2.0, p=1.0),  # 5. 銳利度
+        # transforms.ColorJitter(contrast=(0.1, 1.9)),    # 3. 對比度
+        # transforms.ColorJitter(saturation=(0.1, 1.9)),  # 4. 飽和度
+        # transforms.RandomAdjustSharpness(sharpness_factor=2.0, p=1.0),  # 5. 銳利度
         transforms.RandomAffine(degrees=0, shear=(-20, 20)),  # 6. 錯切 (扭曲變形)
         transforms.RandomAffine(degrees=0, translate=(0.2, 0.2)),  # 7. 平移
         transforms.RandomRotation(degrees=(-30, 30)),  # 8. 旋轉
-        transforms.RandomAutocontrast(p=1.0),  # 9. 自動對比
-        transforms.RandomEqualize(p=1.0),      # 10. 直方圖均衡化
+        # transforms.RandomAutocontrast(p=1.0),  # 9. 自動對比
+        # transforms.RandomEqualize(p=1.0),      # 10. 直方圖均衡化
         # 如果你的任務對色彩細節非常敏感 (例如微小瑕疵)，建議把下面兩個註解掉：
         # transforms.RandomPosterize(bits=4, p=1.0),   # 11. 色調分離 (減少色彩位元)
         # transforms.RandomSolarize(threshold=128, p=1.0)  # 12. 曝光過度 (反轉亮部像素)
