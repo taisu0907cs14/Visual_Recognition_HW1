@@ -18,7 +18,7 @@ Follow the steps below to set up the Conda environment and install the required 
 ```bash
 conda create -n resnet python=3.10 -y
 conda activate resnet
-pip install torch torchvision torchaudio --index-url [https://download.pytorch.org/whl/cu121](https://download.pytorch.org/whl/cu121)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install matplotlib tqdm scikit-learn tensorboard pandas seaborn
 ```
 ## Usage
